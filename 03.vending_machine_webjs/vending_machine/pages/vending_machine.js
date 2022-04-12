@@ -16,7 +16,7 @@ const VendingMachine = () => {
             } catch (err) {
                 setError(err.message);
             }
-
+ 
         } else {
             console.log('Please install Metamask');
         }
