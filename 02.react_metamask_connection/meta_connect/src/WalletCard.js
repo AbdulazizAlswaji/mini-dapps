@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {ethers} from 'ethers'
+import { ethers } from 'ethers';
 
 const WalletCard = () => {
 
@@ -9,10 +9,35 @@ const WalletCard = () => {
     const [connButtonText, setConnButtonText] = useState('Connect Wallet');
 
     const connectWalletHandler = () => {
-        console.log(window.ethereum);
+        if (window.ethereum) {
+            window.ethereum.request({ method: 'eth_requestAccounts' }).then(result => {
+                accountChangeHandler(result[0]);
+            });
+        } else {
+            setErrorMessage('Install MetaMask');
+        }
+    }
+
+    const accountChangeHandler = (newAccount) => {
+        setDefaultAccount(newAccount);
+        getUserBalance(newAccount);
+    }
+
+    const getUserBalance = (address) => {
+        window.ethereum.request({ method: 'eth_getBalance', params: [address, 'latest'] }).then(balance => {
+            setUserBalance(ethers.utils.formatEther(balance));
+        })
+
+    }
+
+    const chainChangedHandler = () => {
+        window.location.reload();
     }
 
 
+    window.ethereum.on('accountsChanges', accountChangeHandler);
+
+    window.ethereum.on('chainChanged', chainChangedHandler);
 
     return (
         <div className='walletCard'>
