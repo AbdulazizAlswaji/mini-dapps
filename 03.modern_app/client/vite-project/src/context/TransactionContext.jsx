@@ -19,17 +19,47 @@ const getEthereumContract = () => {
 }
 
 export const TransactionProvider = ({ children }) => {
+    const [currentAccount, setCurrentAccount] = useState();
+    const [formData, setFormData] = useState({
+        addressTo: '',
+        amount: '',
+        keyword: '',
+        message: ''
+    });
+    const handleChange = (e, name) => {
+        setFormData((prevState) => ({...prevState, [name]: e.target.value}))
 
-    const [connectedAccount, setConnectedAccount] = useState();
+    }
+
+
 
 
 
     const checkIfWalletIsConnected = async () => {
-        if (!ethereum) return alert('Please install Metamask');
 
-        const accounts = await ethereum.request({ method: 'eth_accounts' });
-        console.log(accounts);
+        try {
+            if (!ethereum) return alert('Please install Metamask');
+
+            const accounts = await ethereum.request({ method: 'eth_accounts' });
+
+            if (accounts.length) {
+                setCurrentAccount(accounts[0]);
+
+
+            } else {
+                console.log('No accounts');
+            }
+
+        } catch (error) {
+            console.log(error);
+
+            throw new Error('No etheruem object');
+        }
+
+
     }
+
+
 
     const connectWallet = async () => {
         try {
@@ -45,12 +75,27 @@ export const TransactionProvider = ({ children }) => {
         }
     }
 
+    const sendTransaction = async () => {
+        try {
+            if (!ethereum) return alert('Please install Metamask');
+
+           // const { connectWallet, currentAccount, formData, sendTransaction, handleChange } = useContext(TransactionContext);
+
+            getEthereumContract();
+
+        } catch(error) {
+            console.log(error);
+
+            throw new Error('No etheruem object');
+        }
+    }
+
     useEffect(() => {
         checkIfWalletIsConnected();
     }, []);
 
     return (
-        <TransactionContext.Provider value={{ connectWallet:connectWallet }}>
+        <TransactionContext.Provider value={{ connectWallet, currentAccount, formData, setFormData, handleChange, sendTransaction }}>
             {children}
         </TransactionContext.Provider>
     )
