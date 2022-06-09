@@ -1,18 +1,22 @@
 import React from 'react';
 
-const NavBar = ({accounts, setAccounts}) => {
+const NavBar = ({ accounts, setAccounts }) => {
+
+
     const isConnected = Boolean(accounts[0]);
 
+    console.log('isconnected', accounts);
+
     async function connectAccount() {
-        if(window.ethereum) {
-            const accounts = await window.ethereum.request({
+        if (window.ethereum) {
+            accounts = await window.ethereum.request({
                 method: 'eth_requestAccounts'
             });
             setAccounts(accounts);
         }
     }
 
-    return(
+    return (
         <div>
             <div>Facebook</div>
             <div>Twitter</div>
@@ -24,9 +28,12 @@ const NavBar = ({accounts, setAccounts}) => {
 
             {isConnected ? (
                 <p>Connected</p>
-            ): (
+            ) : (
+
                 <button onClick={connectAccount}>Connect</button>
             )}
         </div>
     );
 }
+
+export default NavBar;
